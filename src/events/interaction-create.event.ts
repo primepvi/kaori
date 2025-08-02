@@ -24,15 +24,16 @@ export default class extends BotEvent<"interactionCreate"> {
                 if (command.useDatabase && !userIsRegistered)
                     return interaction.reply({
                         content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro** ${interaction.user}, para **utilizar este comando** você **precisa** se **registrar** no meu ${emojis.icons_box} **[ \`Banco de Dados\` ]**!`
-                          + `\n${emojis.icons_text1} Utilize o comando /register para efetuar o seu registro no meu banco de dados.`,
+                          + `\n-# ${emojis.icons_text1} Utilize o comando /register para efetuar o seu registro no meu banco de dados.`,
                         flags: ["Ephemeral"]
                     });
 
                 await command.run(bot, interaction);
             } catch (error) {
-                interaction.reply({
+                const method = interaction.deferred ? "editReply" : "reply";
+
+                interaction[method]({
                     content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro** ${interaction.user}, **ocorreu um erro** ao **executar** esse **comando**, tente novamente mais tarde!`,
-                    flags: ["Ephemeral"]
                 });
 
                 console.error(error);
