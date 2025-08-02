@@ -12,6 +12,7 @@ const bot = new Bot({
 		GatewayIntentBits.GuildIntegrations,
 	],
 	token: process.env.TOKEN as string,
+	slashCommandGuilds: ["1327425233388568576"],
 });
 
 bot.init();
