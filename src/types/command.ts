@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionData, ApplicationCommandType, ChatInputApplicationCommandData, ChatInputCommandInteraction } from "discord.js";
 import { Bot } from "../structs/bot";
-import { logger } from "@kauzx/logger";
 
 export abstract class SlashCommand implements ChatInputApplicationCommandData {
     abstract name: string;
@@ -8,9 +7,10 @@ export abstract class SlashCommand implements ChatInputApplicationCommandData {
     abstract options?: readonly ApplicationCommandOptionData[];
     abstract run(bot: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">): unknown;
 
+    public useDatabase = false;
+
     public register(bot: Bot) {
         bot.commands.set(this.name, this);
-        logger.success(`O slash command ${this.name} foi carregado com sucesso.`)
     }
 
     public toJSON(): ChatInputApplicationCommandData {

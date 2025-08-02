@@ -11,8 +11,12 @@ const bot = new Bot({
 		GatewayIntentBits.GuildExpressions,
 		GatewayIntentBits.GuildIntegrations,
 	],
-	token: process.env.TOKEN as string,
-	slashCommandGuilds: ["1327425233388568576"],
+	token: process.env.TOKEN!,
+	databaseUrl: process.env.DATABASE_URL!,
+	slashCommandGuilds: [
+		"1327425233388568576", // cdm
+		"1251586916701311028" // union
+	],
 });
 
 bot.init();
