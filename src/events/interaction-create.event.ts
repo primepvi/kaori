@@ -23,7 +23,8 @@ export default class extends BotEvent<"interactionCreate"> {
             try {
                 if (command.useDatabase && !userIsRegistered)
                     return interaction.reply({
-                        content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro** ${interaction.user}, para **utilizar este comando** você **precisa** se **registrar** no meu ${emojis.icons_box} **[ \`Banco de Dados\` ]**!`,
+                        content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro** ${interaction.user}, para **utilizar este comando** você **precisa** se **registrar** no meu ${emojis.icons_box} **[ \`Banco de Dados\` ]**!`
+                          + `\n${emojis.icons_text1} Utilize o comando /register para efetuar o seu registro no meu banco de dados.`,
                         flags: ["Ephemeral"]
                     });
 
