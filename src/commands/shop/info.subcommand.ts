@@ -13,7 +13,11 @@ export default class ShopInfoCommand extends SubSlashCommand {
     public description = "Utilize esse comando para entrar na loja.";
     public options = [];
 
-    public run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
+    public async run(bot: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
+        const guild = await bot.guilds.fetch(interaction.guildId);
+        const command = guild.commands.cache.find(c => c.name === "shop");
+        if (!command) throw new Error("Unexpected error has ocurred..");
+
         const ItemSection = k.fragment((item: Item) => {
             const emoji = emojis[item.emoji as keyof typeof emojis];
             const operationEmoji = item.operation === "buy" ? emojis.icons_djoin : emojis.icons_dleave;
@@ -33,8 +37,8 @@ export default class ShopInfoCommand extends SubSlashCommand {
                     components: [k.text(
                         `# ${emojis.icons_marketcart} — Lojinha da Kaori`,
                         `-# ${emojis.icons_text1} Aqui você pode comprar e vender seus itens.`,
-                        `> ${emojis.icons_djoin} **Comprar**: \`/shop buy <item> <quantidade?>\``,
-                        `> ${emojis.icons_dleave} **Vender**: \`/shop sell <item> <quantidade?>\``,
+                        `> ${emojis.icons_djoin} **Comprar**: </shop buy:${command.id}> \`<item> <quantidade?>\``,
+                        `> ${emojis.icons_dleave} **Vender**: </shop sell:${command.id}> \`<item> <quantidade?>\``,
                     )]
                 }),
                 k.separator.small,

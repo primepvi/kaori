@@ -1,10 +1,10 @@
 import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 import { Bot } from "../../structs/bot";
 import { SubSlashCommand, SubSlashCommandOption } from "../../types/command";
-import shopItems from "../../constants/shop.json";
 import { db } from "../../models";
 import emojis from "#emojis";
 import { abbreviate } from "util-stunks";
+import shopItems from "../../constants/shop.json";
 
 const buyItemChoices = Object.values(shopItems)
     .filter(item => item.operation === "buy")
