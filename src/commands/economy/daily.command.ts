@@ -13,6 +13,8 @@ export default class DailyCommand extends SlashCommand {
     public name = "daily";
     public description = "Utilize esse comando para resgatar sua recompensa diária.";
     public options = [];
+    public haveSubCommands = false;
+
     public override useDatabase = true;
 
     public async run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
@@ -41,9 +43,9 @@ export default class DailyCommand extends SlashCommand {
        await userData.save();
 
        return interaction.editReply({
-           content: `${emojis.icons_correct} ${emojis.icons_text5} **Coletado!** ${interaction.user}, você **coletou** com **sucesso** sua ${emojis.icons_gift} **[ \`Recompensa Diária\` ]** e **recebeu**:`
-            + `\n> - ${emojis.icons_coin} ${emojis.icons_text6} **Moedas**: *\`${abbreviatedReward}\`*`
-            + `\n-# ${emojis.icons_text1} Volte novamente <t:${newParsedTimestamp}:R>`
+           content: `-# ${emojis.icons_text3} Sua recompensa diária estará disponível novamente <t:${newParsedTimestamp}:R>`
+            + `\n${emojis.icons_correct} ${emojis.icons_text5} **Coletado!** ${interaction.user}, você **coletou** com **sucesso** sua ${emojis.icons_gift} **[ \`Recompensa Diária\` ]** e **recebeu**:`
+            + `\n> - ${emojis.icons_coin} ${emojis.icons_text6} **Moedas**: \`${abbreviatedReward}\``
        })
     }
 }

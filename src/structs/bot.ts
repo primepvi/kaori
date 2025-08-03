@@ -1,7 +1,7 @@
 import type { ClientEvents, GatewayIntentBits } from 'discord.js';
 import { Client, Collection } from 'discord.js';
 import type { BotEvent } from '../types/event';
-import type { SlashCommand } from '../types/command.ts';
+import type { SlashCommand, SubSlashCommand } from '../types/command.ts';
 import { BaseLoader } from './base-loader';
 import { logger } from '@kauzx/logger';
 import mongoose from 'mongoose';
@@ -15,9 +15,12 @@ export interface BotOptions {
 
 export type BotLoadableEvent = BotEvent<keyof ClientEvents>;
 export type BotLoadableCommand = SlashCommand;
+export type BotLoadableSubCommand = SubSlashCommand;
 
 export class Bot extends Client<true> {
 	public commands = new Collection<string, SlashCommand>();
+	public subCommands = new Collection<string, SubSlashCommand>();
+
 	public slashCommandGuilds: string[];
 	public databaseUrl: string;
 
@@ -33,8 +36,10 @@ export class Bot extends Client<true> {
 
 	public async init() {
 		await super.login(this.token);
+
 		await this.loadEvents();
 		await this.loadCommands();
+
 		await this.connectDatabase();
 	}
 
@@ -61,6 +66,7 @@ export class Bot extends Client<true> {
 		});
 
 		await loader.load<BotLoadableCommand>(this);
+		await this.loadSubCommands();
 
 		const commands = this.commands.map(c => c.toJSON());
 		if (!commands) return;
@@ -71,6 +77,19 @@ export class Bot extends Client<true> {
 
 			logger.warn(`Slash Commands carregados na guild: ${guild.name} [${guildId}]`)
 		}
+	}
+
+	private async loadSubCommands() {
+		const loader = new BaseLoader({
+			allowDefaultImport: true,
+			allowDeepLoad: true,
+			allowInstances: true,
+			basePath: 'src/commands',
+			extension: 'subcommand.ts',
+			resourceName: 'Sub Slash Command'
+		});
+
+		await loader.load<BotLoadableSubCommand>(this);
 	}
 
 	private async connectDatabase() {

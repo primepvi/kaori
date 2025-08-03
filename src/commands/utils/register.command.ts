@@ -8,6 +8,7 @@ export default class RegisterCommand extends SlashCommand {
     public name = "register";
     public description = "Utilize esse comando para se registrar no banco de dados.";
     public options = [];
+    public haveSubCommands = false;
 
     public async run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
         const userAlreadyRegistered = await db.user.exists({ _id: interaction.user.id });
