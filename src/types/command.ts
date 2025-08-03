@@ -38,9 +38,11 @@ export abstract class SlashCommand implements ChatInputApplicationCommandData {
     }
 }
 
+export type SubSlashCommandOption = Exclude<ApplicationCommandOptionData, ApplicationCommandSubGroupData | ApplicationCommandSubCommandData>;
+
 export abstract class SubSlashCommand extends SlashCommand {
     abstract reference: string;
-    abstract options: Exclude<ApplicationCommandOptionData, ApplicationCommandSubGroupData | ApplicationCommandSubCommandData>[];
+    abstract options: SubSlashCommandOption[];
 
     public haveSubCommands = false;
 

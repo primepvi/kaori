@@ -1,0 +1,12 @@
+{
+    "wheat_seed": {
+        "id": "wheat_seed",
+        "display": "Semente de Trigo",
+        "emoji": "icons_wheat_seed"
+    },
+    "wheat_product": {
+        "id": "wheat_product",
+        "display": "Trigo",
+        "emoji": "icons_wheat"
+    }
+}
