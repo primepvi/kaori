@@ -5,6 +5,7 @@ import type { SlashCommand, SubSlashCommand } from '../types/command.ts';
 import { BaseLoader } from './base-loader';
 import { logger } from '@kauzx/logger';
 import mongoose from 'mongoose';
+import path from 'node:path';
 
 export interface BotOptions {
 	token: string;
@@ -43,11 +44,12 @@ export class Bot extends Client<true> {
 	}
 
 	private async loadEvents() {
+		const basePath = path.join(__dirname, '../events');
 		const loader = new BaseLoader({
 			allowDefaultImport: true,
 			allowInstances: true,
-			basePath: 'src/events',
-			extension: 'event.ts',
+			basePath,
+			extension: 'event.@(ts|js)',
 			resourceName: 'Evento',
 		});
 
@@ -55,12 +57,13 @@ export class Bot extends Client<true> {
 	}
 
 	private async loadCommands() {
+		const basePath = path.join(__dirname, '../commands');
 		const loader = new BaseLoader({
 			allowDefaultImport: true,
 			allowDeepLoad: true,
 			allowInstances: true,
-			basePath: 'src/commands',
-			extension: 'command.ts',
+			basePath,
+			extension: 'command.@(ts|js)',
 			resourceName: 'Slash Command'
 		});
 
@@ -79,12 +82,13 @@ export class Bot extends Client<true> {
 	}
 
 	private async loadSubCommands() {
+		const basePath = path.join(__dirname, '../commands');
 		const loader = new BaseLoader({
 			allowDefaultImport: true,
 			allowDeepLoad: true,
 			allowInstances: true,
-			basePath: 'src/commands',
-			extension: 'subcommand.ts',
+			basePath,
+			extension: 'subcommand.@(ts|js)',
 			resourceName: 'Sub Slash Command'
 		});
 
