@@ -12,7 +12,7 @@ export interface UserData {
 
 const userSchema = new Schema<UserData>({
     _id: { type: String, required: true },
-    farm: { type: Schema.Types.ObjectId, ref: "Farm" },
+    farm: { type: Schema.Types.ObjectId, ref: "farms" },
     coins: { type: Number, default: 0 },
     createdAt: { type: Number, default: Date.now },
     cooldowns: { type: Map, of: Number, default: new Map() }

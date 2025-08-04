@@ -35,12 +35,11 @@ export class Bot extends Client<true> {
 	}
 
 	public async init() {
+		await this.connectDatabase();
 		await super.login(this.token);
 
 		await this.loadEvents();
 		await this.loadCommands();
-
-		await this.connectDatabase();
 	}
 
 	private async loadEvents() {

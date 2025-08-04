@@ -49,11 +49,11 @@ export default class ShopBuySubCommand extends SubSlashCommand {
             });
 
         await db.item.findOneAndUpdate(
-            { ownerId: interaction.user.id, id: itemId },
+            { owner: interaction.user.id, id: itemId },
             {
                 $setOnInsert: {
                     id: itemId,
-                    ownerId: interaction.user.id,
+                    owner: interaction.user.id,
                 },
                 $inc: { quantity: itemQuantity },
             },
