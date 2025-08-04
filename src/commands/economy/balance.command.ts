@@ -10,7 +10,7 @@ export default class BalanceCommand extends SlashCommand {
     public description = "Utilize esse comando para ver quantas moedas você possui na carteira.";
     public options = [];
 
-    public useDatabase = true;
+    public override useDatabase = true;
     public haveSubCommands = false;
 
     public async run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
