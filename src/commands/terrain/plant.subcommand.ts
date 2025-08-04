@@ -4,8 +4,6 @@ import { SubSlashCommand, SubSlashCommandOption } from "../../types/command";
 import seeds from "../../constants/seeds.json";
 import { db } from "../../models";
 import emojis from "#emojis";
-import { abbreviate } from "util-stunks";
-
 const ms = require("ms");
 
 const plantSeedChoices = Object.values(seeds)
@@ -37,15 +35,15 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
         }
     ];
 
-    public async run(bot: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
+    public async run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
         await interaction.deferReply();
 
         const seedId = interaction.options.getString("seed", true);
         const seedQuantity = interaction.options.getInteger("quantity") ?? 1;
-        const terrainId = interaction.options.getInteger("terrain") ?? 1;
-
         const seed = seeds[seedId as keyof typeof seeds];
         const seedEmoji = emojis[seed.seed_emoji as keyof typeof emojis];
+
+        const terrainId = interaction.options.getInteger("terrain") ?? 1;
         const terrain = (await db.terrain.find({ owner: interaction.user.id }))
           .at(terrainId - 1);
 
@@ -56,7 +54,7 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
         const userItems = await db.item.find({ owner: interaction.user.id });
         const userSeedItem = userItems.find(item => item.id === seedId && item.quantity >= seedQuantity);
         if (!userSeedItem) return interaction.editReply({
-            content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`${abbreviate(seedQuantity)}x\` ${seedEmoji} **[ \`${seed.seed_display}\` ]** para **plantar**.`,
+            content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${seedQuantity}\` ${seedEmoji} **[ \`${seed.seed_display}\` ]** para **plantar**.`,
         });
 
         const avaiableSlots = terrain.slots.filter(s => !s.active);
@@ -81,7 +79,7 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
         await terrain.save();
 
         return interaction.editReply({
-            content: `> ${emojis.icons_correct} ${emojis.icons_text5} **Sucesso!** ${interaction.user}, você **plantou** \`${abbreviate(seedQuantity)}x\` ${seedEmoji} **[ \`${seed.seed_display}\` ]** no **terreno** \`${terrainId}\`.`
+            content: `> ${emojis.icons_correct} ${emojis.icons_text5} **Sucesso!** ${interaction.user}, você **plantou** \`x${seedQuantity}\` ${seedEmoji} **[ \`${seed.seed_display}\` ]** no **terreno** \`${terrainId}\`.`
         })
     }
 }

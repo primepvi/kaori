@@ -2,6 +2,9 @@ import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "disco
 import { Bot } from "../../structs/bot";
 import { SubSlashCommand, SubSlashCommandOption } from "../../types/command";
 import shopItems from "../../constants/shop.json";
+import emojis from "#emojis";
+import { db } from "../../models";
+import { abbreviate } from "util-stunks";
 
 const sellItemChoices = Object.values(shopItems)
     .filter(item => item.operation === "sell")
@@ -28,7 +31,27 @@ export default class ShopSellSubCommand extends SubSlashCommand {
         }
     ];
 
-    public run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
-        return interaction.reply("Não fiz ainda newba.");
+    public async run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
+        const itemId = interaction.options.getString("item", true);
+        const itemData = shopItems[itemId as keyof typeof shopItems];
+        const itemQuantity = interaction.options.getInteger("quantity") ?? 1;
+        const itemEmoji = emojis[itemData.emoji as keyof typeof emojis];
+        const itemDisplay = `${itemEmoji}  **[ \`${itemData.display}\` ]**`;
+
+        const userItem = await db.item.findOne({ id: itemId, owner: interaction.user.id });
+        if (!userItem || userItem.quantity < itemQuantity) return interaction.editReply({
+            content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${itemQuantity}\` ${itemDisplay} para **vender**.`
+        })
+
+        const price = itemData.price * itemQuantity;
+
+        await db.user.findByIdAndUpdate(interaction.user.id, {
+            $inc: { coins: price }
+        });
+
+        userItem.quantity -= itemQuantity;
+        await userItem.save();
+
+        return interaction.reply(`> ${emojis.icons_correct} ${emojis.icons_text5} **Vendido!** ${interaction.user}, você **vendeu** com **sucesso** \`x${itemQuantity}\` ${itemDisplay} por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`);
     }
 }

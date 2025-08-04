@@ -16,8 +16,9 @@ export default class InventoryCommand extends SlashCommand {
     public haveSubCommands = false;
 
     public async run(_: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
-        const userItems = await db.item.find({ owner: interaction.user.id })
-        if (!userItems) return interaction.reply({
+        const userItems = (await db.item.find({ owner: interaction.user.id }))
+            .filter(item => item.quantity > 0);
+        if (!userItems || userItems.length <= 0) return interaction.reply({
             content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui nenhum item** em seu **inventário**.`,
             flags: ["Ephemeral"]
         })
@@ -28,7 +29,7 @@ export default class InventoryCommand extends SlashCommand {
 
            const emoji = emojis[item.emoji as keyof typeof emojis];
 
-           return `> - \`${abbreviate(rawItem.quantity)}x\` ${emoji} **[ \`${item.display}\` ]**`
+           return `> - \`x${rawItem.quantity}\` ${emoji} **[ \`${item.display}\` ]**`
         });
 
         return interaction.reply({

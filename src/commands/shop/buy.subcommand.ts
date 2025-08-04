@@ -63,6 +63,6 @@ export default class ShopBuySubCommand extends SubSlashCommand {
         userData.coins -= price;
         await userData.save();
 
-        return interaction.reply(`> ${emojis.icons_correct} ${emojis.icons_text5} **Comprado!** ${interaction.user}, você **comprou** com **sucesso** \`${abbreviate(itemQuantity)}x\` ${itemEmoji} **[ \`${item.display}\` ]** por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`);
+        return interaction.reply(`> ${emojis.icons_correct} ${emojis.icons_text5} **Comprado!** ${interaction.user}, você **comprou** com **sucesso** \`x${itemQuantity}\` ${itemEmoji} **[ \`${item.display}\` ]** por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`);
     }
 }

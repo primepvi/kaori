@@ -6,7 +6,7 @@
         "product_display": "Trigo",
         "product_id": "wheat_product",
         "product_emoji": "wheat_product",
-        "cooldown": "15s",
+        "cooldown": "30min",
         "emoji": "wheat"
     }
 }
