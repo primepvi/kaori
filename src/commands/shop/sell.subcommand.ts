@@ -39,7 +39,7 @@ export default class ShopSellSubCommand extends SubSlashCommand {
         const itemDisplay = `${itemEmoji}  **[ \`${itemData.display}\` ]**`;
 
         const userItem = await db.item.findOne({ id: itemId, owner: interaction.user.id });
-        if (!userItem || userItem.quantity < itemQuantity) return interaction.editReply({
+        if (!userItem || userItem.quantity < itemQuantity) return interaction.reply({
             content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${itemQuantity}\` ${itemDisplay} para **vender**.`
         })
 
