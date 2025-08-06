@@ -2,11 +2,11 @@ import {
 	ApplicationCommandOptionType,
 	type ChatInputCommandInteraction,
 } from 'discord.js';
-import emojis from '#emojis';
-import plants from '@/constants/plants.json' with { type: 'json' };
-import { ItemManager } from '@/structs/item-manager';
+import emojis from '../../constants/emojis.json';
+import plants from '../../constants/plants.json';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
+import { ItemManager } from '../../structs/item-manager';
 import {
 	SubSlashCommand,
 	type SubSlashCommandOption,

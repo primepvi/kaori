@@ -8,13 +8,13 @@
   "carrot": {
     "seed": "carrot_seed",
     "product": "carrot_product",
-    "cooldown": "45min",
+    "cooldown": "1h",
     "emoji": "carrot"
   },
   "eggplant": {
     "seed": "eggplant_seed",
     "product": "eggplant_product",
-    "cooldown": "1h",
+    "cooldown": "2h",
     "emoji": "eggplant"
   }
 }

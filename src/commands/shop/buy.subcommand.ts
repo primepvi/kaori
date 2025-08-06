@@ -3,11 +3,11 @@ import {
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import { abbreviate } from 'util-stunks';
-import emojis from '#emojis';
-import { ItemManager } from '@/structs/item-manager';
-import shopItems from '../../constants/shop.json' with { type: 'json' };
+import emojis from '../../constants/emojis.json';
+import shopItems from '../../constants/shop.json';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
+import { ItemManager } from '../../structs/item-manager';
 import {
 	SubSlashCommand,
 	type SubSlashCommandOption,

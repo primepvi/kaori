@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "module": "esnext",
+    "target": "es2015",
+    "module": "commonjs",
     "lib": ["ES2022"],
     "strict": true,
     "moduleResolution": "node",
@@ -9,12 +9,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "rootDir": "src",
-    "outDir": "dist",
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"],
-      "#emojis": ["./constants/emojis.json"]
-    }
+    "outDir": "dist"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

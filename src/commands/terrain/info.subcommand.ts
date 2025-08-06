@@ -3,10 +3,10 @@ import {
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import { k } from 'kompozr';
-import emojis from '#emojis';
-import { ItemManager } from '@/structs/item-manager';
+import emojis from '../../constants/emojis.json';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
+import { ItemManager } from '../../structs/item-manager';
 import {
 	SubSlashCommand,
 	type SubSlashCommandOption,

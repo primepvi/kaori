@@ -1,7 +1,8 @@
-import emojis from '#emojis';
-import items from '../constants/items.json' with { type: 'json' };
-import plants from '../constants/plants.json' with { type: 'json' };
-import shopItems from '../constants/shop.json' with { type: 'json' };
+import emojis from '../constants/emojis.json';
+
+import items from '../constants/items.json';
+import plants from '../constants/plants.json';
+import shopItems from '../constants/shop.json';
 
 export type BasePlant = typeof plants;
 export type BasePlantKey = keyof BasePlant;

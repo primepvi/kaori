@@ -1,5 +1,6 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
-import emojis from '#emojis';
+import emojis from '../../constants/emojis.json';
+
 import { db } from '../../models';
 import type { TerrainSlotData } from '../../models/terrain';
 import type { Bot } from '../../structs/bot';

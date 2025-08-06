@@ -16,7 +16,7 @@
   },
   "carrot_product": {
     "item": "carrot_product",
-    "price": 1000,
+    "price": 1100,
     "operation": "sell"
   },
   "eggplant_seed": {
@@ -26,7 +26,7 @@
   },
   "eggplant_product": {
     "item": "eggplant_product",
-    "price": 2000,
+    "price": 2440,
     "operation": "sell"
   }
 }

@@ -6,8 +6,8 @@
     "dev": "tsx --env-file=.env src/index.ts",
     "dev:w": "tsx --watch --env-file=.env src/index.ts",
     "build": "tsc",
-    "start": "node --env-file=.env -r tsconfig-paths/register dist/index.js",
-    "fetch:emojis": "tsx --env-file=.env src/scripts/fetch-emojis.ts"
+    "start": "node --env-file=.env dist/index.js",
+    "fetch:emojis": "node --env-file=.env dist/scripts/fetch-emojis.js"
   },
   "keywords": [],
   "author": "",

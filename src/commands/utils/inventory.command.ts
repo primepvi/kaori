@@ -1,7 +1,8 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import { k } from 'kompozr';
-import emojis from '#emojis';
-import items from '../../constants/items.json' with { type: 'json' };
+import emojis from '../../constants/emojis.json';
+
+import items from '../../constants/items.json';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
 import { SlashCommand } from '../../types/command';

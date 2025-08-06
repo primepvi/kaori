@@ -30,11 +30,15 @@
       },
       "nursery": {
         "noAwaitInLoop": "off",
-        "noShadow": "off"
+        "noShadow": "off",
+        "useJsonImportAttribute": "off"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "off",
         "noStaticOnlyClass": "off"
+      },
+      "performance": {
+        "noAccumulatingSpread": "off"
       }
     }
   },

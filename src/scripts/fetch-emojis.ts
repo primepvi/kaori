@@ -6,6 +6,12 @@ const headers = {
 	Authorization: `Bot ${process.env.TOKEN!}`,
 };
 
+interface RawEmoji {
+	name: string;
+	id: string;
+	animated: boolean;
+}
+
 async function fetchEmojis() {
 	try {
 		const response = await fetch(
@@ -15,9 +21,12 @@ async function fetchEmojis() {
 			}
 		);
 
-		const data = (await response.json()) as any;
+		const data = (await response.json()) as {
+			items: RawEmoji[];
+		};
+
 		const emojis = data.items.reduce(
-			(acc: {}, curr: any) => ({
+			(acc: Record<string, string>, curr: RawEmoji) => ({
 				...acc,
 				[curr.name]: formatEmoji(curr.id, curr.animated),
 			}),

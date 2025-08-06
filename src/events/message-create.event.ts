@@ -1,5 +1,6 @@
 import type { Message, OmitPartialGroupDMChannel } from 'discord.js';
-import emojis from '#emojis';
+import emojis from '../constants/emojis.json';
+
 import type { Bot, BotEnviromentType } from '../structs/bot';
 import { BotEvent } from '../types/event';
 

@@ -1,13 +1,13 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import { k } from 'kompozr';
-import emojis from '#emojis';
+import emojis from '../../constants/emojis.json';
+import shopItems from '../../constants/shop.json';
+import type { Bot } from '../../structs/bot';
 import {
 	ItemManager,
 	type ShopItemKey,
 	type ShopItems,
-} from '@/structs/item-manager';
-import shopItems from '../../constants/shop.json' with { type: 'json' };
-import type { Bot } from '../../structs/bot';
+} from '../../structs/item-manager';
 import { SubSlashCommand } from '../../types/command';
 
 export default class ShopInfoCommand extends SubSlashCommand {
