@@ -26,10 +26,10 @@ export default class extends BotEvent<'messageCreate'> {
 			] satisfies BotEnviromentType[];
 
 			if (!validEnviroments.includes(enviroment as BotEnviromentType))
-				return message.react(emojis.icons_outage);
+				return message.reply('nog');
 
 			bot.environment = enviroment as BotEnviromentType;
-			return message.react(emojis.icons_correct);
+			return message.reply('pog');
 		}
 
 		if (message.content === bot.user.toString())
