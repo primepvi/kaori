@@ -3,7 +3,7 @@ import {
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import emojis from '#emojis';
-import seeds from '../../constants/seeds.json' with { type: 'json' };
+import { ItemManager } from '@/structs/item-manager';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
 import {
@@ -49,10 +49,9 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **inseriu um id** de **terreno inválido**.`,
 			});
 
-		const validSeeds = Object.keys(seeds);
 		const currentTime = Date.now();
 		const toHarvestSlots = terrain.slots.filter(
-			(s) => currentTime >= s.endsAt && validSeeds.includes(s.seed)
+			(s) => currentTime >= s.endsAt && ItemManager.isValidSeed(s.seed)
 		);
 
 		if (toHarvestSlots.length <= 0)
@@ -62,15 +61,17 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 
 		const harvestProducts: HarvestData[] = [];
 		for (const slot of toHarvestSlots) {
-			const seed = seeds[slot.seed as keyof typeof seeds];
-			const emoji = emojis[seed.emoji as keyof typeof emojis];
+			const plantName = ItemManager.getPlantName(slot.seed);
+			const plant = ItemManager.getPlant(plantName);
+
+			const emoji = emojis[plant.emoji];
 
 			const harvestData: HarvestData = harvestProducts.find(
-				(p) => p.id === seed.seed_id
+				(p) => p.id === plant.seed.id
 			) || {
-				id: seed.seed_id,
-				product_id: seed.product_id,
-				display: `${emoji} **[ \`${seed.product_display}\` ]**`,
+				id: plant.seed.id,
+				product_id: plant.product.id,
+				display: `${emoji} **[ \`${plant.product.display}\` ]**`,
 				quantity: 0,
 			};
 
@@ -81,7 +82,7 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 			slot.startedAt = 0;
 			slot.seed = 'grass';
 
-			const index = harvestProducts.findIndex((p) => p.id === seed.seed_id);
+			const index = harvestProducts.findIndex((p) => p.id === plant.seed.id);
 			if (index < 0) harvestProducts.push(harvestData);
 			else harvestProducts[index] = harvestData;
 		}

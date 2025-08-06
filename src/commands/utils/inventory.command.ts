@@ -1,6 +1,5 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import { k } from 'kompozr';
-import { abbreviate } from 'util-stunks';
 import emojis from '#emojis';
 import items from '../../constants/items.json' with { type: 'json' };
 import { db } from '../../models';

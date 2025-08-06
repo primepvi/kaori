@@ -8,5 +8,25 @@
     "id": "wheat_product",
     "display": "Trigo",
     "emoji": "icons_wheat"
+  },
+  "carrot_seed": {
+    "id": "carrot_seed",
+    "display": "Semente de Cenoura",
+    "emoji": "icons_carrot_seed"
+  },
+  "carrot_product": {
+    "id": "carrot_product",
+    "display": "Cenoura",
+    "emoji": "icons_carrot"
+  },
+  "eggplant_seed": {
+    "id": "eggplant_seed",
+    "display": "Semente de Berinjela",
+    "emoji": "icons_eggplant_seed"
+  },
+  "eggplant_product": {
+    "id": "eggplant_product",
+    "display": "Berinjela",
+    "emoji": "icons_eggplant"
   }
 }

@@ -4,6 +4,7 @@ import {
 } from 'discord.js';
 import { abbreviate } from 'util-stunks';
 import emojis from '#emojis';
+import { ItemManager } from '@/structs/item-manager';
 import shopItems from '../../constants/shop.json' with { type: 'json' };
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
@@ -14,7 +15,10 @@ import {
 
 const buyItemChoices = Object.values(shopItems)
 	.filter((item) => item.operation === 'buy')
-	.map((item) => ({ name: item.display, value: item.id }));
+	.map((rawItem) => {
+		const item = ItemManager.getItem(rawItem.item);
+		return { name: item.display, value: item.id };
+	});
 
 export default class ShopBuySubCommand extends SubSlashCommand {
 	public reference = 'shop';
@@ -46,8 +50,7 @@ export default class ShopBuySubCommand extends SubSlashCommand {
 
 		const itemQuantity = interaction.options.getInteger('quantity') ?? 1;
 		const itemId = interaction.options.getString('item', true);
-		const item = shopItems[itemId as keyof typeof shopItems];
-		const itemEmoji = emojis[item.emoji as keyof typeof emojis];
+		const item = ItemManager.getItem(itemId);
 
 		const price = item.price * itemQuantity;
 		if (price > userData.coins)
@@ -72,7 +75,7 @@ export default class ShopBuySubCommand extends SubSlashCommand {
 		await userData.save();
 
 		return interaction.reply(
-			`> ${emojis.icons_correct} ${emojis.icons_text5} **Comprado!** ${interaction.user}, você **comprou** com **sucesso** \`x${itemQuantity}\` ${itemEmoji} **[ \`${item.display}\` ]** por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`
+			`> ${emojis.icons_correct} ${emojis.icons_text5} **Comprado!** ${interaction.user}, você **comprou** com **sucesso** \`x${itemQuantity}\` ${item.format()} por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`
 		);
 	}
 }

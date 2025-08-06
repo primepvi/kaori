@@ -3,7 +3,8 @@ import {
 	type ChatInputCommandInteraction,
 } from 'discord.js';
 import emojis from '#emojis';
-import seeds from '../../constants/seeds.json' with { type: 'json' };
+import plants from '@/constants/plants.json' with { type: 'json' };
+import { ItemManager } from '@/structs/item-manager';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
 import {
@@ -13,10 +14,14 @@ import {
 
 const ms = require('ms');
 
-const plantSeedChoices = Object.values(seeds).map((item) => ({
-	name: item.seed_display,
-	value: item.seed_id,
-}));
+const plantSeedChoices = Object.keys(plants).map((plantName) => {
+	const plant = ItemManager.getPlant(plantName);
+
+	return {
+		name: plant.seed.display,
+		value: plantName,
+	};
+});
 
 export default class TerrainPlantSubCommand extends SubSlashCommand {
 	public reference = 'terrain';
@@ -51,10 +56,10 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 	) {
 		await interaction.deferReply();
 
-		const seedId = interaction.options.getString('seed', true);
+		const plantName = interaction.options.getString('seed', true);
+		const plant = ItemManager.getPlant(plantName);
+
 		const seedQuantity = interaction.options.getInteger('quantity') ?? 1;
-		const seed = seeds[seedId as keyof typeof seeds];
-		const seedEmoji = emojis[seed.seed_emoji as keyof typeof emojis];
 
 		const terrainId = interaction.options.getInteger('terrain') ?? 1;
 		const terrain = (await db.terrain.find({ owner: interaction.user.id })).at(
@@ -68,11 +73,11 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 
 		const userItems = await db.item.find({ owner: interaction.user.id });
 		const userSeedItem = userItems.find(
-			(item) => item.id === seedId && item.quantity >= seedQuantity
+			(item) => item.id === plant.seed.id && item.quantity >= seedQuantity
 		);
 		if (!userSeedItem)
 			return interaction.editReply({
-				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${seedQuantity}\` ${seedEmoji} **[ \`${seed.seed_display}\` ]** para **plantar**.`,
+				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${seedQuantity}\` ${plant.seed.format()} para **plantar**.`,
 			});
 
 		const avaiableSlots = terrain.slots.filter((s) => !s.active);
@@ -82,12 +87,12 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 			});
 
 		const currentTime = Date.now();
-		const endTime = currentTime + ms(seed.cooldown);
+		const endTime = currentTime + ms(plant.cooldown);
 
 		for (let i = 0; i < seedQuantity; i++) {
 			const slot = avaiableSlots[i];
 			slot.active = true;
-			slot.seed = seedId;
+			slot.seed = plant.seed.id;
 			slot.startedAt = currentTime;
 			slot.endsAt = endTime;
 		}
@@ -98,7 +103,7 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 		await terrain.save();
 
 		return interaction.editReply({
-			content: `> ${emojis.icons_correct} ${emojis.icons_text5} **Sucesso!** ${interaction.user}, você **plantou** \`x${seedQuantity}\` ${seedEmoji} **[ \`${seed.seed_display}\` ]** no **terreno** \`${terrainId}\`.`,
+			content: `> ${emojis.icons_correct} ${emojis.icons_text5} **Sucesso!** ${interaction.user}, você **plantou** \`x${seedQuantity}\` ${plant.seed.format()} no **terreno** \`${terrainId}\`.`,
 		});
 	}
 }

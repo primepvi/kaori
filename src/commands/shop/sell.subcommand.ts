@@ -4,6 +4,7 @@ import {
 } from 'discord.js';
 import { abbreviate } from 'util-stunks';
 import emojis from '#emojis';
+import { ItemManager } from '@/structs/item-manager';
 import shopItems from '../../constants/shop.json' with { type: 'json' };
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
@@ -14,7 +15,10 @@ import {
 
 const sellItemChoices = Object.values(shopItems)
 	.filter((item) => item.operation === 'sell')
-	.map((item) => ({ name: item.display, value: item.id }));
+	.map((rawItem) => {
+		const item = ItemManager.getItem(rawItem.item);
+		return { name: item.display, value: item.id };
+	});
 
 export default class ShopSellSubCommand extends SubSlashCommand {
 	public reference = 'shop';
@@ -42,10 +46,8 @@ export default class ShopSellSubCommand extends SubSlashCommand {
 		interaction: ChatInputCommandInteraction<'cached' | 'raw'>
 	) {
 		const itemId = interaction.options.getString('item', true);
-		const itemData = shopItems[itemId as keyof typeof shopItems];
 		const itemQuantity = interaction.options.getInteger('quantity') ?? 1;
-		const itemEmoji = emojis[itemData.emoji as keyof typeof emojis];
-		const itemDisplay = `${itemEmoji}  **[ \`${itemData.display}\` ]**`;
+		const item = ItemManager.getItem(itemId);
 
 		const userItem = await db.item.findOne({
 			id: itemId,
@@ -53,10 +55,10 @@ export default class ShopSellSubCommand extends SubSlashCommand {
 		});
 		if (!userItem || userItem.quantity < itemQuantity)
 			return interaction.reply({
-				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${itemQuantity}\` ${itemDisplay} para **vender**.`,
+				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **não possui** \`x${itemQuantity}\` ${item.format()} para **vender**.`,
 			});
 
-		const price = itemData.price * itemQuantity;
+		const price = item.price * itemQuantity;
 
 		await db.user.findByIdAndUpdate(interaction.user.id, {
 			$inc: { coins: price },
@@ -66,7 +68,7 @@ export default class ShopSellSubCommand extends SubSlashCommand {
 		await userItem.save();
 
 		return interaction.reply(
-			`> ${emojis.icons_correct} ${emojis.icons_text5} **Vendido!** ${interaction.user}, você **vendeu** com **sucesso** \`x${itemQuantity}\` ${itemDisplay} por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`
+			`> ${emojis.icons_correct} ${emojis.icons_text5} **Vendido!** ${interaction.user}, você **vendeu** com **sucesso** \`x${itemQuantity}\` ${item.format()} por \`${abbreviate(price)}\` ${emojis.icons_coin} **[ \`Moedas\` ]**!`
 		);
 	}
 }

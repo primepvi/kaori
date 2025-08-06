@@ -4,7 +4,7 @@ import {
 } from 'discord.js';
 import { k } from 'kompozr';
 import emojis from '#emojis';
-import seeds from '../../constants/seeds.json' with { type: 'json' };
+import { ItemManager } from '@/structs/item-manager';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
 import {
@@ -12,7 +12,7 @@ import {
 	type SubSlashCommandOption,
 } from '../../types/command';
 
-interface ProductData {
+interface SlotInfoData {
 	id: string;
 	emoji: string;
 	display: string;
@@ -35,7 +35,7 @@ export default class TerrainInfoSubCommand extends SubSlashCommand {
 	];
 
 	public async run(
-		bot: Bot,
+		_: Bot,
 		interaction: ChatInputCommandInteraction<'cached' | 'raw'>
 	) {
 		const terrainId = interaction.options.getInteger('terrain') ?? 1;
@@ -56,46 +56,53 @@ export default class TerrainInfoSubCommand extends SubSlashCommand {
 				(i + 1) * terrain.width
 			);
 			const line = slots.map((slot) => {
-				const isValidSeed = Object.keys(seeds).includes(slot.seed);
-				if (!isValidSeed) return emojis[slot.seed as keyof typeof emojis];
+				if (!ItemManager.isValidSeed(slot.seed))
+					return emojis[slot.seed as keyof typeof emojis];
 
 				const isReadyToCollect = currentTime >= slot.endsAt;
-				const seed = seeds[slot.seed as keyof typeof seeds];
-				const emojiName = isReadyToCollect ? seed.product_emoji : seed.emoji;
-				return emojis[emojiName as keyof typeof emojis];
+
+				const plantName = ItemManager.getPlantName(slot.seed);
+				const plant = ItemManager.getPlant(plantName);
+
+				const emojiName = isReadyToCollect ? plant.product.emoji : plant.emoji;
+				return emojis[emojiName];
 			});
 
 			return `> ${line.join(' ')}`;
 		});
 
-		const products: ProductData[] = [];
+		const slotsInfoData: SlotInfoData[] = [];
 		for (const slot of terrain.slots) {
-			const isValidSeed = Object.keys(seeds).includes(slot.seed);
-			if (!isValidSeed) continue;
+			if (!ItemManager.isValidSeed(slot.seed)) continue;
 
-			const seed = seeds[slot.seed as keyof typeof seeds];
+			const plantName = ItemManager.getPlantName(slot.seed);
+			const plant = ItemManager.getPlant(plantName);
+
 			const isReadyToCollect = currentTime >= slot.endsAt;
-			const productId = isReadyToCollect ? seed.product_id : seed.seed_id;
-			const emojiName = isReadyToCollect ? seed.product_emoji : seed.emoji;
+			const slotInfoId = isReadyToCollect ? plant.product.id : plant.seed.id;
+			const emojiName = isReadyToCollect ? plant.product.emoji : plant.emoji;
+
 			const emoji = emojis[emojiName as keyof typeof emojis];
 
-			const product: ProductData = products.find((p) => p.id === productId) || {
-				id: productId,
-				display: `**${seed.product_display} [ \`${isReadyToCollect ? 'Pronto!' : 'Em Andamento'}\` ]**`,
+			const slotInfo: SlotInfoData = slotsInfoData.find(
+				(p) => p.id === slotInfoId
+			) || {
+				id: slotInfoId,
+				display: `**${plant.product.display} [ \`${isReadyToCollect ? 'Pronto!' : 'Em Andamento'}\` ]**`,
 				emoji,
 				quantity: 0,
 			};
 
-			product.quantity += 1;
+			slotInfo.quantity += 1;
 
-			const index = products.findIndex((p) => p.id === productId);
-			if (index < 0) products.push(product);
-			else products[index] = product;
+			const index = slotsInfoData.findIndex((p) => p.id === slotInfoId);
+			if (index < 0) slotsInfoData.push(slotInfo);
+			else slotsInfoData[index] = slotInfo;
 		}
 
 		const productsBoard =
-			products
-				.map((p) => `> \`${p.quantity}x\` ${p.emoji} ${p.display}`)
+			slotsInfoData
+				.map((p) => `> \`x${p.quantity}\` ${p.emoji} ${p.display}`)
 				.join('\n') || '`...nenhum`';
 
 		const container = k.container({

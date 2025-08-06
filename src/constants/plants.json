@@ -1,0 +1,20 @@
+{
+  "wheat": {
+    "seed": "wheat_seed",
+    "product": "wheat_product",
+    "cooldown": "30min",
+    "emoji": "wheat"
+  },
+  "carrot": {
+    "seed": "carrot_seed",
+    "product": "carrot_product",
+    "cooldown": "45min",
+    "emoji": "carrot"
+  },
+  "eggplant": {
+    "seed": "eggplant_seed",
+    "product": "eggplant_product",
+    "cooldown": "1h",
+    "emoji": "eggplant"
+  }
+}

@@ -1,11 +1,14 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import { k } from 'kompozr';
 import emojis from '#emojis';
+import {
+	ItemManager,
+	type ShopItemKey,
+	type ShopItems,
+} from '@/structs/item-manager';
 import shopItems from '../../constants/shop.json' with { type: 'json' };
 import type { Bot } from '../../structs/bot';
 import { SubSlashCommand } from '../../types/command';
-
-type Item = (typeof shopItems)[keyof typeof shopItems];
 
 export default class ShopInfoCommand extends SubSlashCommand {
 	public reference = 'shop';
@@ -21,13 +24,14 @@ export default class ShopInfoCommand extends SubSlashCommand {
 		const command = guild.commands.cache.find((c) => c.name === 'shop');
 		if (!command) throw new Error('Unexpected error has ocurred..');
 
-		const ItemSection = k.fragment((item: Item) => {
-			const emoji = emojis[item.emoji as keyof typeof emojis];
+		const ItemSection = k.fragment((rawItem: ShopItems[ShopItemKey]) => {
+			const item = ItemManager.getItem(rawItem.item);
+
 			const operationEmoji =
 				item.operation === 'buy' ? emojis.icons_djoin : emojis.icons_dleave;
 
 			return [
-				`> ${operationEmoji} ${emoji} ${emojis.icons_text5} **${item.display}**:` +
+				`> ${operationEmoji} ${emojis[item.emoji]} ${emojis.icons_text5} **${item.display}**:` +
 					`\n> -# ${emojis.icons_text1} ${emojis.icons_coin} **Preço: ${item.price}**`,
 				k.separator.smallHidden,
 			];

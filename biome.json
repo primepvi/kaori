@@ -33,7 +33,8 @@
         "noShadow": "off"
       },
       "complexity": {
-        "noExcessiveCognitiveComplexity": "off"
+        "noExcessiveCognitiveComplexity": "off",
+        "noStaticOnlyClass": "off"
       }
     }
   },

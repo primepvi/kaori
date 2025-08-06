@@ -1,16 +1,32 @@
 {
   "wheat_seed": {
-    "id": "wheat_seed",
-    "display": "Semente de Trigo",
+    "item": "wheat_seed",
     "price": 250,
-    "operation": "buy",
-    "emoji": "icons_wheat_seed"
+    "operation": "buy"
   },
   "wheat_product": {
-    "id": "wheat_product",
-    "display": "Trigo",
+    "item": "wheat_product",
     "price": 500,
-    "operation": "sell",
-    "emoji": "icons_wheat"
+    "operation": "sell"
+  },
+  "carrot_seed": {
+    "item": "carrot_seed",
+    "price": 500,
+    "operation": "buy"
+  },
+  "carrot_product": {
+    "item": "carrot_product",
+    "price": 1000,
+    "operation": "sell"
+  },
+  "eggplant_seed": {
+    "item": "eggplant_seed",
+    "price": 1000,
+    "operation": "buy"
+  },
+  "eggplant_product": {
+    "item": "eggplant_product",
+    "price": 2000,
+    "operation": "sell"
   }
 }
