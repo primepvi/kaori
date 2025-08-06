@@ -1,55 +1,66 @@
-import { ChatInputCommandInteraction } from "discord.js";
-import { Bot } from "../../structs/bot";
-import { SubSlashCommand } from "../../types/command";
-import { k } from "kompozr";
-import emojis from "#emojis";
-import shopItems from "../../constants/shop.json";
+import type { ChatInputCommandInteraction } from 'discord.js';
+import { k } from 'kompozr';
+import emojis from '#emojis';
+import shopItems from '../../constants/shop.json' with { type: 'json' };
+import type { Bot } from '../../structs/bot';
+import { SubSlashCommand } from '../../types/command';
 
-type Item = typeof shopItems[keyof typeof shopItems];
+type Item = (typeof shopItems)[keyof typeof shopItems];
 
 export default class ShopInfoCommand extends SubSlashCommand {
-    public reference = "shop";
-    public name = "info";
-    public description = "Utilize esse comando para entrar na loja.";
-    public options = [];
+	public reference = 'shop';
+	public name = 'info';
+	public description = 'Utilize esse comando para entrar na loja.';
+	public options = [];
 
-    public async run(bot: Bot, interaction: ChatInputCommandInteraction<"cached" | "raw">) {
-        const guild = await bot.guilds.fetch(interaction.guildId);
-        const command = guild.commands.cache.find(c => c.name === "shop");
-        if (!command) throw new Error("Unexpected error has ocurred..");
+	public async run(
+		bot: Bot,
+		interaction: ChatInputCommandInteraction<'cached' | 'raw'>
+	) {
+		const guild = await bot.guilds.fetch(interaction.guildId);
+		const command = guild.commands.cache.find((c) => c.name === 'shop');
+		if (!command) throw new Error('Unexpected error has ocurred..');
 
-        const ItemSection = k.fragment((item: Item) => {
-            const emoji = emojis[item.emoji as keyof typeof emojis];
-            const operationEmoji = item.operation === "buy" ? emojis.icons_djoin : emojis.icons_dleave;
+		const ItemSection = k.fragment((item: Item) => {
+			const emoji = emojis[item.emoji as keyof typeof emojis];
+			const operationEmoji =
+				item.operation === 'buy' ? emojis.icons_djoin : emojis.icons_dleave;
 
-            return [`> ${operationEmoji} ${emoji} ${emojis.icons_text5} **${item.display}**:`
-                + `\n> -# ${emojis.icons_text1} ${emojis.icons_coin} **Preço: ${item.price}**`, k.separator.smallHidden]
-        })
+			return [
+				`> ${operationEmoji} ${emoji} ${emojis.icons_text5} **${item.display}**:` +
+					`\n> -# ${emojis.icons_text1} ${emojis.icons_coin} **Preço: ${item.price}**`,
+				k.separator.smallHidden,
+			];
+		});
 
-        const itemsDisplay = ItemSection(Object.values(shopItems)).flat(2);
-        itemsDisplay.pop();
+		const itemsDisplay = ItemSection(Object.values(shopItems)).flat(2);
+		itemsDisplay.pop();
 
-        const container = k.container({
-            color: "Aqua",
-            components: [
-                k.section({
-                    accessory: k.thumbnail({ url: "https://cdn.discordapp.com/emojis/1347627699773898888.png" }),
-                    components: [k.text(
-                        `# ${emojis.icons_marketcart} — Lojinha da Kaori`,
-                        `-# ${emojis.icons_text1} Aqui você pode comprar e vender seus itens.`,
-                        `> ${emojis.icons_djoin} **Comprar**: </shop buy:${command.id}> \`<item> <quantidade?>\``,
-                        `> ${emojis.icons_dleave} **Vender**: </shop sell:${command.id}> \`<item> <quantidade?>\``,
-                    )]
-                }),
-                k.separator.small,
-                `## ${emojis.icons_todolist} — Catálogo`,
-                ...itemsDisplay,
-            ]
-        });
+		const container = k.container({
+			color: 'Aqua',
+			components: [
+				k.section({
+					accessory: k.thumbnail({
+						url: 'https://cdn.discordapp.com/emojis/1347627699773898888.png',
+					}),
+					components: [
+						k.text(
+							`# ${emojis.icons_marketcart} — Lojinha da Kaori`,
+							`-# ${emojis.icons_text1} Aqui você pode comprar e vender seus itens.`,
+							`> ${emojis.icons_djoin} **Comprar**: </shop buy:${command.id}> \`<item> <quantidade?>\``,
+							`> ${emojis.icons_dleave} **Vender**: </shop sell:${command.id}> \`<item> <quantidade?>\``
+						),
+					],
+				}),
+				k.separator.small,
+				`## ${emojis.icons_todolist} — Catálogo`,
+				...itemsDisplay,
+			],
+		});
 
-        return interaction.reply({
-            components: [container],
-            flags: ["IsComponentsV2"]
-        });
-    }
+		return interaction.reply({
+			components: [container],
+			flags: ['IsComponentsV2'],
+		});
+	}
 }

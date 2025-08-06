@@ -21,7 +21,8 @@
         "noNonNullAssertion": "off",
         "noParameterAssign": "off",
         "noParameterProperties": "off",
-        "useConsistentMemberAccessibility": "off"
+        "useConsistentMemberAccessibility": "off",
+        "useBlockStatements": "off"
       },
       "suspicious": {
         "noConsole": "off",
@@ -30,6 +31,9 @@
       "nursery": {
         "noAwaitInLoop": "off",
         "noShadow": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
       }
     }
   },

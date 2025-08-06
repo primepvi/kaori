@@ -14,8 +14,8 @@ const bot = new Bot({
 	token: process.env.TOKEN!,
 	databaseUrl: process.env.DATABASE_URL!,
 	slashCommandGuilds: [
-		"1327425233388568576", // cdm
-		"1251586916701311028" // union
+		'1327425233388568576', // cdm
+		'1251586916701311028', // union
 	],
 });
 

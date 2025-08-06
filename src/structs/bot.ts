@@ -1,11 +1,11 @@
+import path from 'node:path';
+import { logger } from '@kauzx/logger';
 import type { ClientEvents, GatewayIntentBits } from 'discord.js';
 import { Client, Collection } from 'discord.js';
-import type { BotEvent } from '../types/event';
-import type { SlashCommand, SubSlashCommand } from '../types/command.ts';
-import { BaseLoader } from './base-loader';
-import { logger } from '@kauzx/logger';
 import mongoose from 'mongoose';
-import path from 'node:path';
+import type { SlashCommand, SubSlashCommand } from '../types/command.ts';
+import type { BotEvent } from '../types/event';
+import { BaseLoader } from './base-loader';
 
 export interface BotOptions {
 	token: string;
@@ -17,10 +17,12 @@ export interface BotOptions {
 export type BotLoadableEvent = BotEvent<keyof ClientEvents>;
 export type BotLoadableCommand = SlashCommand;
 export type BotLoadableSubCommand = SubSlashCommand;
+export type BotEnviromentType = 'dev' | 'devprod' | 'prod';
 
 export class Bot extends Client<true> {
 	public commands = new Collection<string, SlashCommand>();
 	public subCommands = new Collection<string, SubSlashCommand>();
+	public environment: BotEnviromentType = 'prod';
 
 	public slashCommandGuilds: string[];
 	public databaseUrl: string;
@@ -64,20 +66,22 @@ export class Bot extends Client<true> {
 			allowInstances: true,
 			basePath,
 			extension: 'command.@(ts|js)',
-			resourceName: 'Slash Command'
+			resourceName: 'Slash Command',
 		});
 
 		await loader.load<BotLoadableCommand>(this);
 		await this.loadSubCommands();
 
-		const commands = this.commands.map(c => c.toJSON());
+		const commands = this.commands.map((c) => c.toJSON());
 		if (!commands) return;
 
 		for (const guildId of this.slashCommandGuilds) {
 			const guild = await this.guilds.fetch(guildId);
 			await guild.commands.set(commands);
 
-			logger.warn(`Slash Commands carregados na guild: ${guild.name} [${guildId}]`)
+			logger.warn(
+				`Slash Commands carregados na guild: ${guild.name} [${guildId}]`
+			);
 		}
 	}
 
@@ -89,7 +93,7 @@ export class Bot extends Client<true> {
 			allowInstances: true,
 			basePath,
 			extension: 'subcommand.@(ts|js)',
-			resourceName: 'Sub Slash Command'
+			resourceName: 'Sub Slash Command',
 		});
 
 		await loader.load<BotLoadableSubCommand>(this);
@@ -98,9 +102,11 @@ export class Bot extends Client<true> {
 	private async connectDatabase() {
 		try {
 			await mongoose.connect(this.databaseUrl);
-			logger.success(`Database conectado com sucesso.`);
+			logger.success('Database conectado com sucesso.');
 		} catch (error) {
-			logger.error(`Erro ao conectar-se ao banco de dados: ${(error as Error).message}`)
+			logger.error(
+				`Erro ao conectar-se ao banco de dados: ${(error as Error).message}`
+			);
 		}
 	}
 }

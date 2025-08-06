@@ -1,17 +1,17 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
 export interface ItemData {
-    id: string;
-    owner: string;
-    quantity: number;
-    createdAt: number;
+	id: string;
+	owner: string;
+	quantity: number;
+	createdAt: number;
 }
 
 const itemSchema = new Schema<ItemData>({
-    id: { type: String, required: true },
-    owner: { type: String, required: true, ref: "users" },
-    quantity: { type: Number, default: 0 },
-    createdAt: { type: Number, default: Date.now },
-})
+	id: { type: String, required: true },
+	owner: { type: String, required: true, ref: 'users' },
+	quantity: { type: Number, default: 0 },
+	createdAt: { type: Number, default: Date.now },
+});
 
-export const itemModel = model<ItemData>("items", itemSchema);
+export const itemModel = model<ItemData>('items', itemSchema);
