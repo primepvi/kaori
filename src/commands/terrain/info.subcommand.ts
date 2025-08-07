@@ -64,7 +64,7 @@ export default class TerrainInfoSubCommand extends SubSlashCommand {
 				const plantName = ItemManager.getPlantName(slot.seed);
 				const plant = ItemManager.getPlant(plantName);
 
-				const emojiName = isReadyToCollect ? plant.product.emoji : plant.emoji;
+				const emojiName = isReadyToCollect ? plant.product_emoji : plant.emoji;
 				return emojis[emojiName];
 			});
 
@@ -80,7 +80,7 @@ export default class TerrainInfoSubCommand extends SubSlashCommand {
 
 			const isReadyToCollect = currentTime >= slot.endsAt;
 			const slotInfoId = isReadyToCollect ? plant.product.id : plant.seed.id;
-			const emojiName = isReadyToCollect ? plant.product.emoji : plant.emoji;
+			const emojiName = isReadyToCollect ? plant.product_emoji : plant.emoji;
 
 			const emoji = emojis[emojiName as keyof typeof emojis];
 

@@ -18,6 +18,7 @@ export type EmojiKey = keyof Emojis;
 
 export interface Plant {
 	emoji: EmojiKey;
+	product_emoji: EmojiKey;
 	cooldown: string;
 	product: PlantProduct;
 	seed: PlantSeed;
@@ -80,6 +81,7 @@ export class ItemManager {
 
 		return {
 			emoji: rawPlant.emoji,
+			product_emoji: product.id,
 			cooldown: rawPlant.cooldown,
 			product,
 			seed,
