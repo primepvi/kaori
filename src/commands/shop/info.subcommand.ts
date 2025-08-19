@@ -28,7 +28,7 @@ export default class ShopInfoCommand extends SubSlashCommand {
 			const item = ItemManager.getItem(rawItem.item);
 
 			const operationEmoji =
-				item.operation === 'buy' ? emojis.icons_djoin : emojis.icons_dleave;
+				item.operation === 'buy' ? emojis.icons_dleave : emojis.icons_djoin;
 
 			return [
 				`> ${operationEmoji} ${emojis[item.emoji]} ${emojis.icons_text5} **${item.display}**:` +
@@ -51,8 +51,8 @@ export default class ShopInfoCommand extends SubSlashCommand {
 						k.text(
 							`# ${emojis.icons_marketcart} — Lojinha da Kaori`,
 							`-# ${emojis.icons_text1} Aqui você pode comprar e vender seus itens.`,
-							`> ${emojis.icons_djoin} **Comprar**: </shop buy:${command.id}> \`<item> <quantidade?>\``,
-							`> ${emojis.icons_dleave} **Vender**: </shop sell:${command.id}> \`<item> <quantidade?>\``
+							`> ${emojis.icons_dleave} **Comprar**: </shop buy:${command.id}> \`<item> <quantidade?>\``,
+							`> ${emojis.icons_djoin} **Vender**: </shop sell:${command.id}> \`<item> <quantidade?>\``
 						),
 					],
 				}),
