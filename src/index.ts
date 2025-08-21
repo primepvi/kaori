@@ -16,6 +16,7 @@ const bot = new Bot({
 	slashCommandGuilds: [
 		'1327425233388568576', // cdm
 		'1251586916701311028', // union
+		'1325520892536684665', // servidor de teste
 	],
 });
 

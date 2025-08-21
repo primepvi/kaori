@@ -6,7 +6,7 @@ import emojis from '../../constants/emojis.json';
 import plants from '../../constants/plants.json';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
-import { ItemManager } from '../../structs/item-manager';
+import { type BasePlantKey, ItemManager } from '../../structs/item-manager';
 import {
 	SubSlashCommand,
 	type SubSlashCommandOption,
@@ -56,7 +56,10 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 	) {
 		await interaction.deferReply();
 
-		const plantName = interaction.options.getString('seed', true);
+		const plantName = interaction.options.getString(
+			'seed',
+			true
+		) as BasePlantKey;
 		const plant = ItemManager.getPlant(plantName);
 
 		const seedQuantity = interaction.options.getInteger('quantity') ?? 1;
@@ -70,6 +73,9 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 			return interaction.editReply({
 				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **inseriu um id** de **terreno inválido**.`,
 			});
+
+		const farm = await db.farm.findOne({ owner: interaction.user.id });
+		if (!farm) throw new Error('Unexpected error has ocurred!');
 
 		const userItems = await db.item.find({ owner: interaction.user.id });
 		const userSeedItem = userItems.find(
@@ -97,9 +103,19 @@ export default class TerrainPlantSubCommand extends SubSlashCommand {
 			slot.endsAt = endTime;
 		}
 
+		const farmPlantData = farm.plants.get(plantName) || {
+			name: plantName,
+			harvested: 0,
+			planted: 0,
+		};
+
+		farmPlantData.planted += seedQuantity;
+		farm.plants.set(plantName, farmPlantData);
+
 		userSeedItem.quantity -= seedQuantity;
 
 		await userSeedItem.save();
+		await farm.save();
 		await terrain.save();
 
 		return interaction.editReply({

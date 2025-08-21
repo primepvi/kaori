@@ -5,7 +5,7 @@ import {
 import emojis from '../../constants/emojis.json';
 import { db } from '../../models';
 import type { Bot } from '../../structs/bot';
-import { ItemManager } from '../../structs/item-manager';
+import { type BasePlantKey, ItemManager } from '../../structs/item-manager';
 import {
 	SubSlashCommand,
 	type SubSlashCommandOption,
@@ -13,6 +13,7 @@ import {
 
 interface HarvestData {
 	id: string;
+	name: BasePlantKey;
 	product_id: string;
 	display: string;
 	quantity: number;
@@ -49,6 +50,9 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 				content: `> ${emojis.icons_outage} ${emojis.icons_text5} **Erro!** ${interaction.user}, você **inseriu um id** de **terreno inválido**.`,
 			});
 
+		const farm = await db.farm.findOne({ owner: interaction.user.id });
+		if (!farm) throw new Error('Unexpected error has ocurred!');
+
 		const currentTime = Date.now();
 		const toHarvestSlots = terrain.slots.filter(
 			(s) => currentTime >= s.endsAt && ItemManager.isValidSeed(s.seed)
@@ -61,7 +65,7 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 
 		const harvestProducts: HarvestData[] = [];
 		for (const slot of toHarvestSlots) {
-			const plantName = ItemManager.getPlantName(slot.seed);
+			const plantName = ItemManager.getPlantName(slot.seed) as BasePlantKey;
 			const plant = ItemManager.getPlant(plantName);
 
 			const emoji = emojis[plant.emoji];
@@ -70,6 +74,7 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 				(p) => p.id === plant.seed.id
 			) || {
 				id: plant.seed.id,
+				name: plantName,
 				product_id: plant.product.id,
 				display: `${emoji} **[ \`${plant.product.display}\` ]**`,
 				quantity: 0,
@@ -87,9 +92,16 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 			else harvestProducts[index] = harvestData;
 		}
 
-		await terrain.save();
-
 		for (const product of harvestProducts) {
+			const farmPlantData = farm.plants.get(product.name) || {
+				name: product.name,
+				harvested: 0,
+				planted: 0,
+			};
+
+			farmPlantData.harvested += product.quantity;
+			farm.plants.set(product.name, farmPlantData);
+
 			await db.item.findOneAndUpdate(
 				{ id: product.product_id, owner: interaction.user.id },
 				{
@@ -102,6 +114,9 @@ export default class TerrainHarvestSubCommand extends SubSlashCommand {
 				{ upsert: true, new: true }
 			);
 		}
+
+		await farm.save();
+		await terrain.save();
 
 		const harvestBoard = harvestProducts
 			.map((p) => `> - \`x${p.quantity}\` ${p.display}`)
