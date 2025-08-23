@@ -23,7 +23,7 @@ export class Bot extends Client<true> {
 	public commands = new Collection<string, SlashCommand>();
 	public subCommands = new Collection<string, SubSlashCommand>();
 	public environment: BotEnviromentType = 'dev';
-	public version = 'alpha-v0.2';
+	public version = 'alpha-v0.21';
 
 	public slashCommandGuilds: string[];
 	public databaseUrl: string;

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import type { ChatInputCommandInteraction } from 'discord.js';
+import { k } from 'kompozr';
 import emojis from '../../constants/emojis.json';
 import type { Bot } from '../../structs/bot';
 import { SlashCommand } from '../../types/command';
@@ -18,6 +19,16 @@ export default class ChangelogsCommand extends SlashCommand {
 		content = content.replace(/\[x\]/g, emojis.icons_correct);
 		if (!content) throw new Error('Invalid version.');
 
-		return interaction.reply(content);
+		return interaction.reply({
+			components: [
+				k.container({
+					components: [
+						content.replace(/#/g, `# ${emojis.icons_todolist} Changelogs |`),
+					],
+					color: 'Aqua',
+				}),
+			],
+			flags: ['IsComponentsV2'],
+		});
 	}
 }
